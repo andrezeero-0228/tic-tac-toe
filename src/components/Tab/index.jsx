@@ -13,39 +13,20 @@ function deriveActivePlayer(turns) {
   return currentPlayer;
 }
 
-const initialGameBoard = [
+const PLAYERS = {
+  X: "Player 1",
+  O: "Player 2",
+};
+
+const INITIAL_GAME_BOARD = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
 
-export default function Tab() {
-  const [gameTurns, setGameTurns] = React.useState([]);
-  const [players, setPlayers] = React.useState({
-    X: "Player 1",
-    O: "Player 2",
-  });
-
-  function handlePlayerName(symbol, newName) {
-    setPlayers((prevPlayers) => {
-      return {
-        ...prevPlayers,
-        [symbol]: newName,
-      };
-    });
-  }
-
-  let board = [...initialGameBoard.map((row) => [...row])];
-
-  gameTurns.forEach((turn) => {
-    const { square, player } = turn;
-    const { row, col } = square;
-    board[row][col] = player;
-  });
-
+function deriveWinner(board, players) {
+  console.log(board);
   let winner = undefined;
-
-  const activePlayer = deriveActivePlayer(gameTurns);
 
   WINNING_COMBINATIONS.forEach((combination) => {
     const firstSquareSymbol = board[combination[0].row][combination[0].column];
@@ -60,6 +41,39 @@ export default function Tab() {
       winner = players[firstSquareSymbol];
     }
   });
+  return winner;
+}
+
+function deriveBoard(gameTurns) {
+  let board = [...INITIAL_GAME_BOARD.map((row) => [...row])];
+
+  gameTurns.forEach((turn) => {
+    const { square, player } = turn;
+    const { row, col } = square;
+    board[row][col] = player;
+  });
+
+  return board;
+}
+
+export default function Tab() {
+  const [gameTurns, setGameTurns] = React.useState([]);
+  const [players, setPlayers] = React.useState(PLAYERS);
+
+  function handlePlayerName(symbol, newName) {
+    setPlayers((prevPlayers) => {
+      return {
+        ...prevPlayers,
+        [symbol]: newName,
+      };
+    });
+  }
+
+  const activePlayer = deriveActivePlayer(gameTurns);
+
+  const board = deriveBoard(gameTurns);
+
+  const winner = deriveWinner(board, players);
 
   const hasDraw = gameTurns.length === 9 && !winner;
 

@@ -5,7 +5,6 @@ export default function PlayerInfo({
   piece,
   isActive,
   handlePlayerName,
-  players,
 }) {
   const [playerName, setPlayerName] = useState(name);
   const [isEditing, setIsEditing] = useState(false);
